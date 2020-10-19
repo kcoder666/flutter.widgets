@@ -52,6 +52,10 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
     this.minCacheExtent,
+    this.onTap,
+    this.onTapUp,
+    this.onTapDown,
+    this.onTapCancel,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         itemPositionNotifier = itemPositionsListener,
@@ -78,6 +82,10 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
     this.minCacheExtent,
+    this.onTap,
+    this.onTapUp,
+    this.onTapDown,
+    this.onTapCancel,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         assert(separatorBuilder != null),
@@ -159,6 +167,12 @@ class ScrollablePositionedList extends StatefulWidget {
   /// in builds of widgets that would otherwise already be built in the
   /// cache extent.
   final double minCacheExtent;
+
+  // Delegates of Tap event detector.
+  final GestureTapCallback onTap;
+  final GestureTapUpCallback onTapUp;
+  final GestureTapDownCallback onTapDown;
+  final GestureTapCancelCallback onTapCancel;
 
   @override
   State<StatefulWidget> createState() => _ScrollablePositionedListState();
@@ -289,7 +303,16 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: () => cancelScrollCallback?.call(),
+        onTap: () {
+          if (cancelScrollCallback != null) {
+            cancelScrollCallback.call();
+            return;
+          }
+          widget.onTap?.call();
+        },
+        onTapUp: (details) => widget.onTapUp?.call(details),
+        onTapDown: (details) => widget.onTapDown?.call(details),
+        onTapCancel: () => widget.onTapCancel?.call(),
         excludeFromSemantics: true,
         child: Stack(
           children: <Widget>[
