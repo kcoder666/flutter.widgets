@@ -56,6 +56,11 @@ class ScrollablePositionedList extends StatefulWidget {
     this.onTapUp,
     this.onTapDown,
     this.onTapCancel,
+    this.onVerticalDragCancel,
+    this.onVerticalDragDown,
+    this.onVerticalDragStart,
+    this.onVerticalDragUpdate,
+    this.onVerticalDragEnd,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         itemPositionNotifier = itemPositionsListener,
@@ -86,6 +91,11 @@ class ScrollablePositionedList extends StatefulWidget {
     this.onTapUp,
     this.onTapDown,
     this.onTapCancel,
+    this.onVerticalDragCancel,
+    this.onVerticalDragDown,
+    this.onVerticalDragStart,
+    this.onVerticalDragUpdate,
+    this.onVerticalDragEnd,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
         assert(separatorBuilder != null),
@@ -168,11 +178,18 @@ class ScrollablePositionedList extends StatefulWidget {
   /// cache extent.
   final double minCacheExtent;
 
-  // Delegates of Tap event detector.
+  // Delegates of Tap event handling.
   final GestureTapCallback onTap;
   final GestureTapUpCallback onTapUp;
   final GestureTapDownCallback onTapDown;
   final GestureTapCancelCallback onTapCancel;
+
+  // Delegates of Vertical Drag event handling.
+  final GestureDragCancelCallback onVerticalDragCancel;
+  final void Function(DragDownDetails details) onVerticalDragDown;
+  final void Function(DragStartDetails details) onVerticalDragStart;
+  final void Function(DragUpdateDetails details) onVerticalDragUpdate;
+  final void Function(DragEndDetails details) onVerticalDragEnd;
 
   @override
   State<StatefulWidget> createState() => _ScrollablePositionedListState();
@@ -313,6 +330,14 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
         onTapUp: (details) => widget.onTapUp?.call(details),
         onTapDown: (details) => widget.onTapDown?.call(details),
         onTapCancel: () => widget.onTapCancel?.call(),
+        onVerticalDragDown: (details) =>
+            widget.onVerticalDragDown?.call(details),
+        onVerticalDragCancel: () => widget.onVerticalDragCancel?.call(),
+        onVerticalDragStart: (details) =>
+            widget.onVerticalDragStart?.call(details),
+        onVerticalDragUpdate: (details) =>
+            widget.onVerticalDragUpdate?.call(details),
+        onVerticalDragEnd: (details) => widget.onVerticalDragEnd?.call(details),
         excludeFromSemantics: true,
         child: Stack(
           children: <Widget>[
